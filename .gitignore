@@ -1,30 +1,41 @@
-# Node.js
-node_modules/
+# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+
+# dependencies
+/node_modules
+/.pnp
+.pnp.*
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/versions
+
+# testing
+/coverage
+
+# next.js
+/.next/
+/out/
+
+# production
+/build
+
+# misc
+.DS_Store
+*.pem
+
+# debug
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
-pnpm-debug.log*
+.pnpm-debug.log*
 
-# Next.js build output
-.next/
-out/
+# env files (can opt-in for committing if needed)
+.env*
 
-# 환경 설정 파일
-.env.local
-.env.development.local
-.env.test.local
-.env.production.local
+# vercel
+.vercel
 
-# OS/IDE 관련
-.DS_Store
-*.swp
-*.swo
-.idea/
-.vscode/
-
-# 로그 파일
-*.log
-
-# 기타
+# typescript
 *.tsbuildinfo
-coverage/
+next-env.d.ts
