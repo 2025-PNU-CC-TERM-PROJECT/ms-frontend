@@ -211,7 +211,7 @@ export default function SignupPage() {
 
 			<div className="w-full max-w-md relative z-10">
 				{/* 로고 및 타이틀 */}
-				<TitleWithLogo>{}</TitleWithLogo>
+				<TitleWithLogo />
 
 				{/* 회원가입 카드 */}
 				<Card className="overflow-hidden border-0 bg-white/90 shadow-xl shadow-blue-100/50 backdrop-blur-sm transform hover:shadow-2xl transition-all duration-300">
@@ -386,7 +386,7 @@ export default function SignupPage() {
 				</Card>
 
 				{/* 푸터 */}
-				<Footer>{}</Footer>
+				<Footer />
 			</div>
 		</div>
 	);

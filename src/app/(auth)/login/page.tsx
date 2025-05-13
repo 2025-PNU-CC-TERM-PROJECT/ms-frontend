@@ -105,7 +105,7 @@ export default function LoginPage() {
 			</div>
 
 			<div className="w-full max-w-md relative z-10">
-				<TitleWithLogo>{}</TitleWithLogo>
+				<TitleWithLogo />
 
 				{/* 로그인 카드 */}
 				<Card className="overflow-hidden border-0 bg-white/90 shadow-xl shadow-blue-100/50 backdrop-blur-sm transform hover:shadow-2xl transition-all duration-300">
@@ -229,7 +229,7 @@ export default function LoginPage() {
 				</Card>
 
 				{/* 푸터 */}
-				<Footer>{}</Footer>
+				<Footer />
 			</div>
 		</div>
 	);
