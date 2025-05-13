@@ -21,7 +21,7 @@ export function Navbar() {
 					<div className="flex items-center">
 						<div className="w-20 h-20">
 							<Image
-								src="/logo.png"
+								src="/titleLogo.png"
 								alt="logo"
 								width={50}
 								height={50}
