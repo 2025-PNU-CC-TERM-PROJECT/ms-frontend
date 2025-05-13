@@ -1,8 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useState, FormEvent } from "react";
 import Link from "next/link";
-import Image from "next/image";
 import { useRouter } from "next/navigation";
 
 import { Button } from "@/components/ui/button";
@@ -20,22 +19,30 @@ import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { LockKeyhole, User, Loader2, LogIn, AlertCircle } from "lucide-react";
 import { Footer } from "@/components/layout/Footer";
-import { TitleWithLogo } from "../../../components/layout/TitleWithLogo";
+import { TitleWithLogo } from "@/components/layout/TitleWithLogo";
+
+interface LoginResponse {
+	token: string;
+	id: number;
+	username: string;
+	email: string;
+	role: string;
+}
 
 export default function LoginPage() {
-	const [isLoading, setIsLoading] = useState(false);
-	const [error, setError] = useState("");
+	const [isLoading, setIsLoading] = useState<boolean>(false);
+	const [error, setError] = useState<string>("");
 	const router = useRouter();
 
-	const handleSubmit = async (e) => {
+	const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
 		e.preventDefault();
 		setIsLoading(true);
 		setError("");
 
 		try {
-			const formData = new FormData(e.target);
-			const username = formData.get("username");
-			const password = formData.get("password");
+			const formData = new FormData(e.currentTarget);
+			const username = formData.get("username") as string;
+			const password = formData.get("password") as string;
 
 			const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/login`, {
 				method: "POST",
@@ -55,7 +62,7 @@ export default function LoginPage() {
 				throw new Error(errorData.message || "로그인에 실패했습니다.");
 			}
 
-			const data = await response.json();
+			const data: LoginResponse = await response.json();
 
 			// JWT 토큰을 로컬 스토리지에 저장
 			localStorage.setItem("token", data.token);
@@ -72,7 +79,11 @@ export default function LoginPage() {
 			// 성공 시 대시보드로 리다이렉트
 			router.push("/dashboard");
 		} catch (err) {
-			setError(err.message || "로그인에 실패했습니다. 다시 시도해주세요.");
+			setError(
+				err instanceof Error
+					? err.message
+					: "로그인에 실패했습니다. 다시 시도해주세요."
+			);
 		} finally {
 			setIsLoading(false);
 		}
@@ -94,7 +105,7 @@ export default function LoginPage() {
 			</div>
 
 			<div className="w-full max-w-md relative z-10">
-				<TitleWithLogo />
+				<TitleWithLogo>{}</TitleWithLogo>
 
 				{/* 로그인 카드 */}
 				<Card className="overflow-hidden border-0 bg-white/90 shadow-xl shadow-blue-100/50 backdrop-blur-sm transform hover:shadow-2xl transition-all duration-300">
@@ -218,7 +229,7 @@ export default function LoginPage() {
 				</Card>
 
 				{/* 푸터 */}
-				<Footer />
+				<Footer>{}</Footer>
 			</div>
 		</div>
 	);

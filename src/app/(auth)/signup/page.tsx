@@ -1,4 +1,3 @@
-// src/app/(auth)/signup/page.jsx
 "use client";
 
 import { useState } from "react";
@@ -36,14 +35,19 @@ import {
 	UserPlus,
 	Loader2,
 } from "lucide-react";
-import Image from "next/image";
 import { Footer } from "@/components/layout/Footer";
 import { TitleWithLogo } from "../../../components/layout/TitleWithLogo";
 
+interface PasswordStrengthIndicatorProps {
+	password: string;
+}
+
 // 비밀번호 강도 검사
-const PasswordStrengthIndicator = ({ password }) => {
+const PasswordStrengthIndicator: React.FC<PasswordStrengthIndicatorProps> = ({
+	password,
+}) => {
 	// 비밀번호 강도 계산 (0-100)
-	const calculateStrength = (pass) => {
+	const calculateStrength = (pass: string): number => {
 		if (!pass) return 0;
 
 		let strength = 0;
@@ -69,14 +73,14 @@ const PasswordStrengthIndicator = ({ password }) => {
 	const strength = calculateStrength(password);
 
 	// 강도에 따른 색상
-	const getColor = () => {
+	const getColor = (): string => {
 		if (strength < 30) return "bg-red-500";
 		if (strength < 60) return "bg-yellow-500";
 		return "bg-green-500";
 	};
 
 	// 강도에 따른 메시지
-	const getMessage = () => {
+	const getMessage = (): string => {
 		if (strength < 30) return "매우 약함";
 		if (strength < 60) return "적절함";
 		return "강함";
@@ -121,13 +125,15 @@ const formSchema = z
 		path: ["confirmPassword"],
 	});
 
+type FormData = z.infer<typeof formSchema>;
+
 export default function SignupPage() {
-	const [isLoading, setIsLoading] = useState(false);
-	const [error, setError] = useState("");
+	const [isLoading, setIsLoading] = useState<boolean>(false);
+	const [error, setError] = useState<string>("");
 	const router = useRouter();
 	const { toast } = useToast();
 
-	const form = useForm({
+	const form = useForm<FormData>({
 		resolver: zodResolver(formSchema),
 		defaultValues: {
 			username: "",
@@ -139,7 +145,7 @@ export default function SignupPage() {
 
 	const password = form.watch("password");
 
-	async function onSubmit(data) {
+	async function onSubmit(data: FormData) {
 		setIsLoading(true);
 		setError("");
 
@@ -165,7 +171,7 @@ export default function SignupPage() {
 				throw new Error(errorData.message || "회원가입에 실패했습니다.");
 			}
 
-			const responseData = await response.json();
+			await response.json();
 
 			// 성공 메시지 표시
 			toast({
@@ -178,7 +184,11 @@ export default function SignupPage() {
 				router.push("/login");
 			}, 2000);
 		} catch (error) {
-			setError(error.message);
+			setError(
+				error instanceof Error
+					? error.message
+					: "알 수 없는 오류가 발생했습니다."
+			);
 		} finally {
 			setIsLoading(false);
 		}
@@ -201,7 +211,7 @@ export default function SignupPage() {
 
 			<div className="w-full max-w-md relative z-10">
 				{/* 로고 및 타이틀 */}
-				<TitleWithLogo />
+				<TitleWithLogo>{}</TitleWithLogo>
 
 				{/* 회원가입 카드 */}
 				<Card className="overflow-hidden border-0 bg-white/90 shadow-xl shadow-blue-100/50 backdrop-blur-sm transform hover:shadow-2xl transition-all duration-300">
@@ -376,7 +386,7 @@ export default function SignupPage() {
 				</Card>
 
 				{/* 푸터 */}
-				<Footer />
+				<Footer>{}</Footer>
 			</div>
 		</div>
 	);
