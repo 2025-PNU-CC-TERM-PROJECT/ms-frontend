@@ -1,8 +1,18 @@
 import Image from "next/image";
+import { cn } from "@/lib/utils";
 
-export function TitleWithLogo() {
+interface TitleWithLogoProps {
+	className?: string;
+}
+
+export function TitleWithLogo({ className }: TitleWithLogoProps) {
 	return (
-		<div className="mb-8 text-center transform hover:scale-105 transition-transform duration-300">
+		<div
+			className={cn(
+				"mb-8 text-center transform hover:scale-105 transition-transform duration-300",
+				className
+			)}
+		>
 			<div className="mx-auto mb-4 flex h-45 w-45 items-center justify-center rounded-lg bg-gradient-to-br from-blue-500 to-sky-600 shadow-lg shadow-blue-200">
 				<Image
 					src="/logo.png"
