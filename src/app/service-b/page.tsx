@@ -34,7 +34,7 @@ export default function ServiceB() {
 
 		setLoading(true);
 		setSummary("");
-
+		
 		try {
 			const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/dashboard/text-summary`, {
 				method: "POST",
