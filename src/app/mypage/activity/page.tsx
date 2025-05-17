@@ -12,31 +12,28 @@ interface UsageHistory {
 	inputFile: string | null;
 	resultSummary: string;
 }
+
 function parseResultSummary(resultText: string): { class: string; confidence: number }[] {
 	try {
-	  const raw = JSON.parse(resultText); // resultText는 JSON-문자열 형태의 문자열
-  
-	  // 문자열 내부 정제
-	  const fixed = raw
-		.replace(/([{,])\s*class=([^,}]+)/g, '$1"class":"$2"')
-		.replace(/([{,])\s*confidence=([^,}]+)/g, '$1"confidence":$2')
-		.replace(/=/g, ':'); // 혹시 남아 있을 '=' 정리
-  
-	  return JSON.parse(fixed);
+		const raw = JSON.parse(resultText);
+		const fixed = raw
+			.replace(/([{,])\s*class=([^,}]+)/g, '$1"class":"$2"')
+			.replace(/([{,])\s*confidence=([^,}]+)/g, '$1"confidence":$2')
+			.replace(/=/g, ':');
+		return JSON.parse(fixed);
 	} catch (e) {
-	  console.error("🛑 parseResultSummary 실패:", e);
-	  return [];
+		console.error("🛑 parseResultSummary 실패:", e);
+		return [];
 	}
-  }
-  
-  
+}
+
 export default function ActivityPage() {
 	const [activities, setActivities] = useState<UsageHistory[]>([]);
 	const [selected, setSelected] = useState<UsageHistory | null>(null);
 	const [loading, setLoading] = useState(true);
 	const [resultText, setResultText] = useState<string>("");
 	const [imageUrl, setImageUrl] = useState<string | null>(null);
-
+	const [categoryFilter, setCategoryFilter] = useState<"ALL" | "IMAGE" | "summary">("ALL");
 
 	useEffect(() => {
 		const token = localStorage.getItem("token");
@@ -52,50 +49,70 @@ export default function ActivityPage() {
 
 	useEffect(() => {
 		if (selected && selected.modelType === "IMAGE") {
-		  const token = localStorage.getItem("token");
-	  
-		  fetch(`${process.env.NEXT_PUBLIC_API_URL}/user/usage-history/image/${selected.id}`, {
-			headers: {
-			  Authorization: `Bearer ${token}`,
-			},
-		  })
-			.then(res => res.blob())
-			.then(blob => {
-			  const url = URL.createObjectURL(blob);
-			  setImageUrl(url);
-			});
+			const token = localStorage.getItem("token");
+
+			fetch(`${process.env.NEXT_PUBLIC_API_URL}/user/usage-history/image/${selected.id}`, {
+				headers: { Authorization: `Bearer ${token}` },
+			})
+				.then(res => res.blob())
+				.then(blob => {
+					const url = URL.createObjectURL(blob);
+					setImageUrl(url);
+				});
 
 			fetch(`${process.env.NEXT_PUBLIC_API_URL}/user/usage-history/image-meta/${selected.id}`, {
-				headers: {
-					Authorization: `Bearer ${token}`,
-				},
-				})
+				headers: { Authorization: `Bearer ${token}` },
+			})
 				.then(res => res.json())
 				.then(data => setResultText(data.resultSummary))
 				.catch(err => {
 					console.error("resultSummary 가져오기 실패", err);
 					setResultText("요약 결과를 불러오는 데 실패했습니다.");
 				});
-			}
-
-	  }, [selected]);
-	  
+		}
+	}, [selected]);
 
 	if (loading) return <div className="text-center py-10">불러오는 중...</div>;
+
+	const filteredActivities = activities.filter((a) =>
+		categoryFilter === "ALL" ? true : a.modelType === categoryFilter
+	);
 
 	return (
 		<div className="min-h-screen bg-gradient-to-b from-blue-50 via-sky-50 to-indigo-50 p-6">
 			<div className="max-w-2xl mx-auto space-y-6">
 				<h1 className="text-3xl font-bold text-center text-blue-900">내 활동 내역</h1>
-				<p className="text-center text-gray-600 mb-6">AI 모델 사용 기록을 확인할 수 있어요.</p>
+				<p className="text-center text-gray-600">AI 모델 사용 기록을 확인할 수 있어요.</p>
 
-				{activities.map((activity) => (
+				{/* 카테고리 필터 버튼 */}
+				<div className="flex justify-center gap-3 mt-2">
+					<Button
+						variant={categoryFilter === "ALL" ? "default" : "outline"}
+						onClick={() => setCategoryFilter("ALL")}
+					>
+						전체
+					</Button>
+					<Button
+						variant={categoryFilter === "IMAGE" ? "default" : "outline"}
+						onClick={() => setCategoryFilter("IMAGE")}
+					>
+						🖼 이미지
+					</Button>
+					<Button
+						variant={categoryFilter === "summary" ? "default" : "outline"}
+						onClick={() => setCategoryFilter("summary")}
+					>
+						📄 텍스트
+					</Button>
+				</div>
+
+				{filteredActivities.map((activity) => (
 					<Card
 						key={activity.id}
 						className="bg-white/90 shadow-md hover:shadow-lg transition cursor-pointer"
 						onClick={() => {
 							setSelected(activity);
-							setResultText(""); // 모달 열릴 때 초기화
+							setResultText("");
 						}}
 					>
 						<CardContent className="p-6 flex items-center justify-between">
@@ -126,33 +143,29 @@ export default function ActivityPage() {
 							⏰ {new Date(selected.usageTime).toLocaleString()}
 						</p>
 
-						{/* 이미지일 경우: 이미지 + 별도 fetch한 결과 텍스트 */}
 						{selected.modelType === "IMAGE" ? (
 							<>
-							{imageUrl && (
-							<img
-								src={imageUrl}
-								alt="분석 이미지"
-								className="w-full max-h-[400px] object-contain rounded border"
-							/>
-							)}
+								{imageUrl && (
+									<img
+										src={imageUrl}
+										alt="분석 이미지"
+										className="w-full max-h-[400px] object-contain rounded border"
+									/>
+								)}
 								<div className="bg-slate-100 p-4 rounded text-sm text-gray-800 max-h-[300px] overflow-y-auto">
-								{resultText ? (
-									(() => {
-										const parsed = parseResultSummary(resultText);
-										return parsed.length > 0 ? (
-										<PredictionBarChart results={parsed} />
-										) : (
-										<p className="text-red-500 text-sm">⚠ 결과를 불러오는 데 실패했습니다.</p>
-										);
-									})()
+									{resultText ? (
+										(() => {
+											const parsed = parseResultSummary(resultText);
+											return parsed.length > 0 ? (
+												<PredictionBarChart results={parsed} />
+											) : (
+												<p className="text-red-500 text-sm">⚠ 결과를 불러오는 데 실패했습니다.</p>
+											);
+										})()
 									) : (
-									<p className="text-gray-600">결과 불러오는 중...</p>
+										<p className="text-gray-600">결과 불러오는 중...</p>
 									)}
-
 								</div>
-
-
 							</>
 						) : (
 							<div className="bg-slate-100 p-4 rounded text-sm text-gray-800 whitespace-pre-wrap max-h-[300px] overflow-y-auto">

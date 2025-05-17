@@ -24,7 +24,7 @@ export default function MyPage() {
 		fetch(`${process.env.NEXT_PUBLIC_API_URL}/user`, {
 			method: "GET",
 			headers: {
-				Authorization: `Bearer ${token}`,
+				Authorization: `Bearer ${localStorage.getItem("token")}`,
 				Accept: "application/json",
 			},
 		})
