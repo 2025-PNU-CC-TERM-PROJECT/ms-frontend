@@ -27,6 +27,10 @@ interface LoginResponse {
 	username: string;
 	email: string;
 	role: string;
+
+	usageCount: number;
+	imageCount: number;
+	textCount: number;
 }
 
 export default function LoginPage() {
@@ -73,6 +77,9 @@ export default function LoginPage() {
 					username: data.username,
 					email: data.email,
 					role: data.role,
+					usageCount: data.usageCount,
+					imageCount: data.imageCount,
+					textCount: data.textCount,
 				})
 			);
 

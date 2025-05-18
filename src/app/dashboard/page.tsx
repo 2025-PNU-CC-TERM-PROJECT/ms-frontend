@@ -34,16 +34,22 @@ export default function DashboardPage() {
 		if (storedUser) {
 			const userObj = JSON.parse(storedUser);
 			setUsername(userObj.username || "사용자");
-			// TODO: API에서 실제 사용 통계 가져오기
+	
+			// 사용 횟수 정보 포함
+			const total = userObj.usageCount || 0;
+			const image = userObj.imageCount || 0;
+			const text = userObj.textCount || 0;
+	
 			setUsageStats({
-				imageClassification: 15,
-				textSummarization: 8,
-				totalUsage: 23,
+				imageClassification: image,
+				textSummarization: text,
+				totalUsage: total,
 			});
 		} else {
 			router.push("/login");
 		}
 	}, [router]);
+	
 
 	return (
 		<div className="min-h-screen bg-gradient-to-br from-blue-50 via-sky-50 to-indigo-50">
@@ -71,15 +77,18 @@ export default function DashboardPage() {
 								<div className="flex items-center justify-between">
 									<span className="text-gray-600">총 사용 횟수</span>
 									<span className="text-2xl font-bold text-blue-600">
-										{usageStats.totalUsage}
+									({usageStats.totalUsage} / 30)
 									</span>
 								</div>
 								<div className="h-2 bg-gray-200 rounded-full">
 									<div
-										className="h-2 bg-blue-600 rounded-full"
-										style={{ width: `${(usageStats.totalUsage / 100) * 100}%` }}
+										className="h-2 bg-blue-600 rounded-full transition-all duration-300"
+										style={{
+											width: `${Math.min((usageStats.totalUsage / 30) * 100, 100)}%`,
+										}}
 									></div>
 								</div>
+
 							</div>
 						</CardContent>
 					</Card>
