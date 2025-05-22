@@ -12,6 +12,12 @@ RUN npm install
 # 전체 소스 복사
 COPY . .
 
+#쿠버네티스 배포용!!
+ENV NEXT_PUBLIC_API_URL=http://ms-backend.ms-backend.example.com
+
+#로컬/도커 환경 테스트용!!
+#ENV NEXT_PUBLIC_API_URL=http://localhost:8081
+
 # 애플리케이션 빌드
 RUN npm run build
 
