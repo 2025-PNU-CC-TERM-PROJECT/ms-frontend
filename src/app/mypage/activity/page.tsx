@@ -13,13 +13,15 @@ interface UsageHistory {
 	resultSummary: string;
 }
 
-function parseResultSummary(resultText: string): { class: string; confidence: number }[] {
+function parseResultSummary(
+	resultText: string
+): { class: string; confidence: number }[] {
 	try {
 		const raw = JSON.parse(resultText);
 		const fixed = raw
 			.replace(/([{,])\s*class=([^,}]+)/g, '$1"class":"$2"')
 			.replace(/([{,])\s*confidence=([^,}]+)/g, '$1"confidence":$2')
-			.replace(/=/g, ':');
+			.replace(/=/g, ":");
 		return JSON.parse(fixed);
 	} catch (e) {
 		console.error("🛑 parseResultSummary 실패:", e);
@@ -33,13 +35,15 @@ export default function ActivityPage() {
 	const [loading, setLoading] = useState(true);
 	const [resultText, setResultText] = useState<string>("");
 	const [imageUrl, setImageUrl] = useState<string | null>(null);
-	const [categoryFilter, setCategoryFilter] = useState<"ALL" | "IMAGE" | "summary">("ALL");
+	const [categoryFilter, setCategoryFilter] = useState<
+		"ALL" | "IMAGE" | "summary"
+	>("ALL");
 
 	useEffect(() => {
 		const token = localStorage.getItem("token");
 		if (!token) return;
 
-		fetch(`${process.env.NEXT_PUBLIC_API_URL}/user/usage-history`, {
+		fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/user/usage-history`, {
 			headers: { Authorization: `Bearer ${token}` },
 		})
 			.then((res) => res.json())
@@ -51,21 +55,27 @@ export default function ActivityPage() {
 		if (selected && selected.modelType === "IMAGE") {
 			const token = localStorage.getItem("token");
 
-			fetch(`${process.env.NEXT_PUBLIC_API_URL}/user/usage-history/image/${selected.id}`, {
-				headers: { Authorization: `Bearer ${token}` },
-			})
-				.then(res => res.blob())
-				.then(blob => {
+			fetch(
+				`${process.env.NEXT_PUBLIC_API_URL}/api/user/usage-history/image/${selected.id}`,
+				{
+					headers: { Authorization: `Bearer ${token}` },
+				}
+			)
+				.then((res) => res.blob())
+				.then((blob) => {
 					const url = URL.createObjectURL(blob);
 					setImageUrl(url);
 				});
 
-			fetch(`${process.env.NEXT_PUBLIC_API_URL}/user/usage-history/image-meta/${selected.id}`, {
-				headers: { Authorization: `Bearer ${token}` },
-			})
-				.then(res => res.json())
-				.then(data => setResultText(data.resultSummary))
-				.catch(err => {
+			fetch(
+				`${process.env.NEXT_PUBLIC_API_URL}/api/user/usage-history/image-meta/${selected.id}`,
+				{
+					headers: { Authorization: `Bearer ${token}` },
+				}
+			)
+				.then((res) => res.json())
+				.then((data) => setResultText(data.resultSummary))
+				.catch((err) => {
 					console.error("resultSummary 가져오기 실패", err);
 					setResultText("요약 결과를 불러오는 데 실패했습니다.");
 				});
@@ -81,8 +91,12 @@ export default function ActivityPage() {
 	return (
 		<div className="min-h-screen bg-gradient-to-b from-blue-50 via-sky-50 to-indigo-50 p-6">
 			<div className="max-w-2xl mx-auto space-y-6">
-				<h1 className="text-3xl font-bold text-center text-blue-900">내 활동 내역</h1>
-				<p className="text-center text-gray-600">AI 모델 사용 기록을 확인할 수 있어요.</p>
+				<h1 className="text-3xl font-bold text-center text-blue-900">
+					내 활동 내역
+				</h1>
+				<p className="text-center text-gray-600">
+					AI 모델 사용 기록을 확인할 수 있어요.
+				</p>
 
 				{/* 카테고리 필터 버튼 */}
 				<div className="flex justify-center gap-3 mt-2">
@@ -117,7 +131,9 @@ export default function ActivityPage() {
 					>
 						<CardContent className="p-6 flex items-center justify-between">
 							<div className="text-blue-900 font-medium text-base">
-								{activity.modelType === "IMAGE" ? "🖼️ 이미지 분석" : "📄 텍스트 요약"}
+								{activity.modelType === "IMAGE"
+									? "🖼️ 이미지 분석"
+									: "📄 텍스트 요약"}
 							</div>
 							<div className="text-sm text-gray-500">
 								{new Date(activity.usageTime).toLocaleString()}
@@ -127,7 +143,9 @@ export default function ActivityPage() {
 				))}
 
 				<div className="flex justify-center pt-6">
-					<Button onClick={() => window.location.href = "/mypage"}>마이페이지로 돌아가기</Button>
+					<Button onClick={() => (window.location.href = "/mypage")}>
+						마이페이지로 돌아가기
+					</Button>
 				</div>
 			</div>
 
@@ -136,7 +154,9 @@ export default function ActivityPage() {
 				<div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm">
 					<div className="bg-white w-full max-w-lg rounded-xl shadow-xl p-6 relative space-y-4">
 						<h2 className="text-xl font-bold text-blue-800">
-							{selected.modelType === "IMAGE" ? "🖼️ 이미지 분석" : "📄 텍스트 요약"}
+							{selected.modelType === "IMAGE"
+								? "🖼️ 이미지 분석"
+								: "📄 텍스트 요약"}
 						</h2>
 
 						<p className="text-sm text-gray-500">
@@ -159,7 +179,9 @@ export default function ActivityPage() {
 											return parsed.length > 0 ? (
 												<PredictionBarChart results={parsed} />
 											) : (
-												<p className="text-red-500 text-sm">⚠ 결과를 불러오는 데 실패했습니다.</p>
+												<p className="text-red-500 text-sm">
+													⚠ 결과를 불러오는 데 실패했습니다.
+												</p>
 											);
 										})()
 									) : (

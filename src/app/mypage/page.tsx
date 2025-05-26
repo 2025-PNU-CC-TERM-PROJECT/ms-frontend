@@ -27,7 +27,7 @@ export default function MyPage() {
 			return;
 		}
 
-		fetch(`${process.env.NEXT_PUBLIC_API_URL}/user`, {
+		fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/user`, {
 			method: "GET",
 			headers: {
 				Authorization: `Bearer ${localStorage.getItem("token")}`,

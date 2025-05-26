@@ -48,18 +48,21 @@ export default function LoginPage() {
 			const username = formData.get("username") as string;
 			const password = formData.get("password") as string;
 
-			const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/login`, {
-				method: "POST",
-				headers: {
-					"Content-Type": "application/json",
-					Accept: "application/json",
-				},
-				credentials: "include",
-				body: JSON.stringify({
-					username,
-					password,
-				}),
-			});
+			const response = await fetch(
+				`${process.env.NEXT_PUBLIC_API_URL}/api/auth/login`,
+				{
+					method: "POST",
+					headers: {
+						"Content-Type": "application/json",
+						Accept: "application/json",
+					},
+					credentials: "include",
+					body: JSON.stringify({
+						username,
+						password,
+					}),
+				}
+			);
 
 			if (!response.ok) {
 				const errorData = await response.json().catch(() => ({}));
