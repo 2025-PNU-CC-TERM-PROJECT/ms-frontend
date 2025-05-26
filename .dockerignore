@@ -11,10 +11,6 @@ Thumbs.db
 .vscode
 .idea
 
-# 환경변수 (보안)
-.env
-.env.*
-
 # 빌드 아티팩트
 dist
 .next

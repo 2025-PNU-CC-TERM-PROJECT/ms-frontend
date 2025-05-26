@@ -132,6 +132,7 @@ export default function SignupPage() {
 	const [error, setError] = useState<string>("");
 	const router = useRouter();
 	const { toast } = useToast();
+	console.log("API URL: ", process.env.NEXT_PUBLIC_API_URL);
 
 	const form = useForm<FormData>({
 		resolver: zodResolver(formSchema),
@@ -151,7 +152,7 @@ export default function SignupPage() {
 
 		try {
 			const response = await fetch(
-				`${process.env.NEXT_PUBLIC_API_URL}/signup`,
+				`${process.env.NEXT_PUBLIC_API_URL}/api/auth/signup`,
 				{
 					method: "POST",
 					headers: {
