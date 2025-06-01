@@ -87,7 +87,7 @@ export default function LoginPage() {
 			);
 
 			// 성공 시 대시보드로 리다이렉트
-			router.push("/dashboard");
+			router.replace("/dashboard");
 		} catch (err) {
 			setError(
 				err instanceof Error
