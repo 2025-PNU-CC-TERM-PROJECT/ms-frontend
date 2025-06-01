@@ -13,6 +13,8 @@ import {
 	FileText,
 	Activity,
 } from "lucide-react";
+import Image from "next/image"; // 이미지 넣을 때 필요!
+
 
 interface UsageStats {
 	imageClassification: number;
@@ -181,25 +183,52 @@ export default function DashboardPage() {
 						</CardContent>
 					</Card>
 					{/* 관리자 전용 박스 */}
-{userRole === "ROLE_ADMIN" && (
+					{userRole === "ROLE_ADMIN" && (
 	<Card className="md:col-span-3">
 		<CardHeader>
-			<div className="f	lex items-center gap-2">
+			<div className="flex items-center gap-2">
 				<Activity className="w-5 h-5 text-red-600" />
 				<CardTitle>관리자 전용 기능</CardTitle>
 			</div>
 		</CardHeader>
 		<CardContent>
-			<div className="flex flex-col gap-4">
-				<p className="text-gray-700">이곳에 관리자 기능을 넣을 수 있습니다.</p>
-				<Button
-					className="w-full bg-gradient-to-r from-red-600 to-red-400 hover:from-red-700 hover:to-red-500 text-white"
-					onClick={() => {
-						// 예: 관리자 페이지 이동
-						router.push("/admin");
-					}}
-				>
-					관리자 페이지로 이동
+			<p className="text-gray-700 mb-4">아래 버튼을 클릭하세요.</p>
+
+			<div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+				{/* Grafana 버튼 */}
+						<Button
+			className="h-24 bg-gradient-to-r from-red-600 to-red-400 hover:from-red-700 hover:to-red-500 text-white"
+			onClick={() => {
+				const grafanaUrl = process.env.NEXT_PUBLIC_GRAFANA_URL;
+				if (grafanaUrl) {
+					window.location.href = grafanaUrl; // 외부 URL 이동
+				} else {
+					console.error("GRAFANA_URL is not defined in environment variables.");
+				}
+			}}
+		>
+	<div className="flex flex-col items-center gap-2">
+		<Image src="/granfa.png" alt="Grafana" width={32} height={32} />
+		<span className="text-lg">Grafana 대시보드</span>
+	</div>
+</Button>
+
+				{/* Kiali 버튼 */}
+<Button
+	className="h-24 bg-gradient-to-r from-red-600 to-red-400 hover:from-red-700 hover:to-red-500 text-white"
+	onClick={() => {
+		const kialiUrl = process.env.NEXT_PUBLIC_KIALI_URL;
+		if (kialiUrl) {
+			window.location.href = kialiUrl; // 외부 URL로 이동
+		} else {
+			console.error("KIALI_URL is not defined in environment variables.");
+		}
+	}}
+>
+					<div className="flex flex-col items-center gap-2">
+						<Image src="/kiali.png" alt="Kiali" width={32} height={32} />
+						<span className="text-lg">Kiali 대시보드</span>
+					</div>
 				</Button>
 			</div>
 		</CardContent>
