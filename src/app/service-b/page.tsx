@@ -1,7 +1,5 @@
-// src/app/service-b/page.tsx
 "use client";
 
-// import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -34,16 +32,19 @@ export default function ServiceB() {
 
 		setLoading(true);
 		setSummary("");
-		
+
 		try {
-			const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/dashboard/text-summary`, {
-				method: "POST",
-				headers: {
-					"Content-Type": "application/json",
-					Authorization: `Bearer ${token}`,
-				},
-				body: JSON.stringify({ text }),
-			});
+			const response = await fetch(
+				`${process.env.NEXT_PUBLIC_API_URL}/dashboard/text-summary`,
+				{
+					method: "POST",
+					headers: {
+						"Content-Type": "application/json",
+						Authorization: `Bearer ${token}`,
+					},
+					body: JSON.stringify({ text }),
+				}
+			);
 
 			if (!response.ok) throw new Error("요약 실패");
 
@@ -64,7 +65,7 @@ export default function ServiceB() {
 					<div className="h-2 bg-gradient-to-r from-blue-500 via-sky-500 to-indigo-500"></div>
 					<CardHeader className="py-6 px-6">
 						<CardTitle className="text-xl font-bold text-blue-900">
-							텍스트 요약 서비스
+							문서 요약 서비스
 						</CardTitle>
 					</CardHeader>
 					<CardContent className="px-6 pb-8 space-y-6">

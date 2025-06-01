@@ -48,7 +48,7 @@ export default function ActivityPage() {
 			return;
 		}
 
-		fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/user/usage-history`, {
+		fetch(`${process.env.NEXT_PUBLIC_API_URL}/user/usage-history`, {
 			headers: { Authorization: `Bearer ${token}` },
 		})
 			.then((res) => res.json())
@@ -61,7 +61,7 @@ export default function ActivityPage() {
 			const token = localStorage.getItem("token");
 
 			fetch(
-				`${process.env.NEXT_PUBLIC_API_URL}/api/user/usage-history/image/${selected.id}`,
+				`${process.env.NEXT_PUBLIC_API_URL}/user/usage-history/image/${selected.id}`,
 				{
 					headers: { Authorization: `Bearer ${token}` },
 				}
@@ -73,7 +73,7 @@ export default function ActivityPage() {
 				});
 
 			fetch(
-				`${process.env.NEXT_PUBLIC_API_URL}/api/user/usage-history/image-meta/${selected.id}`,
+				`${process.env.NEXT_PUBLIC_API_URL}/user/usage-history/image-meta/${selected.id}`,
 				{
 					headers: { Authorization: `Bearer ${token}` },
 				}
