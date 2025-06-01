@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { PredictionBarChart } from "@/components/ui/PredictionBarChart";
+import { useRouter } from "next/navigation";
 
 interface UsageHistory {
 	id: number;
@@ -24,7 +25,7 @@ function parseResultSummary(
 			.replace(/=/g, ":");
 		return JSON.parse(fixed);
 	} catch (e) {
-		console.error("🛑 parseResultSummary 실패:", e);
+		console.error(" parseResultSummary 실패:", e);
 		return [];
 	}
 }
@@ -38,25 +39,29 @@ export default function ActivityPage() {
 	const [categoryFilter, setCategoryFilter] = useState<
 		"ALL" | "IMAGE" | "summary"
 	>("ALL");
+	const router = useRouter();
 
 	useEffect(() => {
 		const token = localStorage.getItem("token");
-		if (!token) return;
+		if (!token) {
+			router.push("/login");
+			return;
+		}
 
-		fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/user/usage-history`, {
+		fetch(`${process.env.NEXT_PUBLIC_API_URL}/user/usage-history`, {
 			headers: { Authorization: `Bearer ${token}` },
 		})
 			.then((res) => res.json())
 			.then(setActivities)
 			.finally(() => setLoading(false));
-	}, []);
+	}, [router]); // ⭐ router 넣기 (의존성 추가)
 
 	useEffect(() => {
 		if (selected && selected.modelType === "IMAGE") {
 			const token = localStorage.getItem("token");
 
 			fetch(
-				`${process.env.NEXT_PUBLIC_API_URL}/api/user/usage-history/image/${selected.id}`,
+				`${process.env.NEXT_PUBLIC_API_URL}/user/usage-history/image/${selected.id}`,
 				{
 					headers: { Authorization: `Bearer ${token}` },
 				}
@@ -68,7 +73,7 @@ export default function ActivityPage() {
 				});
 
 			fetch(
-				`${process.env.NEXT_PUBLIC_API_URL}/api/user/usage-history/image-meta/${selected.id}`,
+				`${process.env.NEXT_PUBLIC_API_URL}/user/usage-history/image-meta/${selected.id}`,
 				{
 					headers: { Authorization: `Bearer ${token}` },
 				}

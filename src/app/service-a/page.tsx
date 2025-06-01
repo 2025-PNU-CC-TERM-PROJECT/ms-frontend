@@ -1,6 +1,5 @@
 "use client";
 
-// import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -20,7 +19,7 @@ export default function ServiceA() {
 			router.push("/login");
 		}
 	}, [router]);
-	
+
 	const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 		const selectedFile = e.target.files?.[0];
 		if (selectedFile) setFile(selectedFile);
@@ -42,13 +41,16 @@ export default function ServiceA() {
 		setResult(null);
 
 		try {
-			const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/dashboard/image-class`, {
-				method: "POST",
-				headers: {
-					Authorization: `Bearer ${token}`,
-				},
-				body: formData,
-			});
+			const response = await fetch(
+				`${process.env.NEXT_PUBLIC_API_URL}/dashboard/image-class`,
+				{
+					method: "POST",
+					headers: {
+						Authorization: `Bearer ${token}`,
+					},
+					body: formData,
+				}
+			);
 
 			if (!response.ok) throw new Error("분석 실패");
 
@@ -69,7 +71,7 @@ export default function ServiceA() {
 					<div className="h-2 bg-gradient-to-r from-blue-500 via-sky-500 to-indigo-500"></div>
 					<CardHeader className="py-6 px-6">
 						<CardTitle className="text-xl font-bold text-blue-900">
-							이미지 분류 서비스
+							mobilenet: 동물 이미지 분류 서비스
 						</CardTitle>
 					</CardHeader>
 					<CardContent className="px-6 pb-8 space-y-6">
@@ -85,21 +87,24 @@ export default function ServiceA() {
 							{loading ? "분석 중..." : "이미지 분석 시작"}
 						</Button>
 						{result && result.predictions && (
-								<div className="mt-6 text-sm space-y-2">
-									<p className="font-semibold text-gray-700">예측 결과 상위 3개:</p>
-									<div className="bg-slate-100 p-4 rounded">
-									<PredictionBarChart results={result.predictions.slice(0, 3)} />
-									</div>
+							<div className="mt-6 text-sm space-y-2">
+								<p className="font-semibold text-gray-700">
+									예측 결과 상위 3개:
+								</p>
+								<div className="bg-slate-100 p-4 rounded">
+									<PredictionBarChart
+										results={result.predictions.slice(0, 3)}
+									/>
 								</div>
-								)}
-                            <Button
-                                className="w-full"
-                                variant="outline"
-                                onClick={() => router.push("/dashboard")}
-                            >
-                                ← 대시보드로 돌아가기
-                            </Button>
-
+							</div>
+						)}
+						<Button
+							className="w-full"
+							variant="outline"
+							onClick={() => router.push("/dashboard")}
+						>
+							← 대시보드로 돌아가기
+						</Button>
 					</CardContent>
 				</Card>
 				<Footer />
