@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Footer } from "@/components/layout/Footer";
@@ -22,34 +22,57 @@ interface UsageStats {
 
 export default function DashboardPage() {
 	const [username, setUsername] = useState<string | null>(null);
+	const [userRole, setUserRole] = useState<string | null>(null); // 추가
 	const [usageStats, setUsageStats] = useState<UsageStats>({
 		imageClassification: 0,
 		textSummarization: 0,
 		totalUsage: 0,
 	});
 	const router = useRouter();
+	const pathname = usePathname();
+
+	const fetchUsageStats = async () => {
+		const storedUser = localStorage.getItem("user");
+		const token = localStorage.getItem("token");
+
+		if (!storedUser || !token) {
+			router.push("/login");
+			return;
+		}
+
+		const userObj = JSON.parse(storedUser);
+		setUsername(userObj.username || "사용자");
+		setUserRole(userObj.role || "user"); // 여기에 role 저장!
+
+		try {
+			const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/dashboard/usage-stats`, {
+				method: "GET",
+				headers: {
+					"Content-Type": "application/json",
+					Authorization: `Bearer ${token}`,
+				},
+			});
+
+			if (response.ok) {
+				const data = await response.json();
+				setUsageStats({
+					imageClassification: data.imageCount || 0,
+					textSummarization: data.textCount || 0,
+					totalUsage: data.usageCount || 0,
+				});
+			} else if (response.status === 401) {
+				router.push("/login");
+			} else {
+				console.error("사용량 조회 실패:", response.status);
+			}
+		} catch (error) {
+			console.error("사용량 조회 오류:", error);
+		}
+	};
 
 	useEffect(() => {
-		const storedUser = localStorage.getItem("user");
-		if (storedUser) {
-			const userObj = JSON.parse(storedUser);
-			setUsername(userObj.username || "사용자");
-	
-			// 사용 횟수 정보 포함
-			const total = userObj.usageCount || 0;
-			const image = userObj.imageCount || 0;
-			const text = userObj.textCount || 0;
-	
-			setUsageStats({
-				imageClassification: image,
-				textSummarization: text,
-				totalUsage: total,
-			});
-		} else {
-			router.push("/login");
-		}
-	}, [router]);
-	
+		fetchUsageStats();
+	}, [pathname]);
 
 	return (
 		<div className="min-h-screen bg-gradient-to-br from-blue-50 via-sky-50 to-indigo-50">
@@ -77,7 +100,7 @@ export default function DashboardPage() {
 								<div className="flex items-center justify-between">
 									<span className="text-gray-600">총 사용 횟수</span>
 									<span className="text-2xl font-bold text-blue-600">
-									({usageStats.totalUsage} / 30)
+										({usageStats.totalUsage} / 30)
 									</span>
 								</div>
 								<div className="h-2 bg-gray-200 rounded-full">
@@ -88,7 +111,6 @@ export default function DashboardPage() {
 										}}
 									></div>
 								</div>
-
 							</div>
 						</CardContent>
 					</Card>
@@ -158,6 +180,32 @@ export default function DashboardPage() {
 							</div>
 						</CardContent>
 					</Card>
+					{/* 관리자 전용 박스 */}
+{userRole === "ROLE_ADMIN" && (
+	<Card className="md:col-span-3">
+		<CardHeader>
+			<div className="f	lex items-center gap-2">
+				<Activity className="w-5 h-5 text-red-600" />
+				<CardTitle>관리자 전용 기능</CardTitle>
+			</div>
+		</CardHeader>
+		<CardContent>
+			<div className="flex flex-col gap-4">
+				<p className="text-gray-700">이곳에 관리자 기능을 넣을 수 있습니다.</p>
+				<Button
+					className="w-full bg-gradient-to-r from-red-600 to-red-400 hover:from-red-700 hover:to-red-500 text-white"
+					onClick={() => {
+						// 예: 관리자 페이지 이동
+						router.push("/admin");
+					}}
+				>
+					관리자 페이지로 이동
+				</Button>
+			</div>
+		</CardContent>
+	</Card>
+)}
+
 				</div>
 			</main>
 
