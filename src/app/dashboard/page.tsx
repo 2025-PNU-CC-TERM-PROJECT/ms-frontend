@@ -65,8 +65,11 @@ export default function DashboardPage() {
 					totalUsage: data.usageCount || 0,
 				});
 			} else if (response.status === 401) {
+				localStorage.removeItem("token");
+				localStorage.removeItem("user");
 				router.push("/login");
-			} else {
+			}
+			 else {
 				console.error("사용량 조회 실패:", response.status);
 			}
 		} catch (error) {
