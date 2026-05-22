@@ -14,6 +14,7 @@ import {
 	Activity,
 } from "lucide-react";
 import Image from "next/image"; // 이미지 넣을 때 필요!
+import { apiUrl } from "@/lib/api";
 
 interface UsageStats {
 	imageClassification: number;
@@ -47,7 +48,7 @@ export default function DashboardPage() {
 
 		try {
 			const response = await fetch(
-				`${process.env.NEXT_PUBLIC_API_URL}/dashboard/usage-stats`,
+				apiUrl("/dashboard/usage-stats"),
 				{
 					method: "GET",
 					headers: {

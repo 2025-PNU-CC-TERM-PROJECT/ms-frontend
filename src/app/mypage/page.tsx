@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Footer } from "@/components/layout/Footer";
 import { TitleWithLogo } from "@/components/layout/TitleWithLogo";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { apiUrl } from "@/lib/api";
 
 interface User {
 	username: string;
@@ -27,7 +28,7 @@ export default function MyPage() {
 			return;
 		}
 
-		fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/user`, {
+		fetch(apiUrl("/api/user"), {
 			method: "GET",
 			headers: {
 				Authorization: `Bearer ${localStorage.getItem("token")}`,

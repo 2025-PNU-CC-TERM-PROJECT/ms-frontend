@@ -20,6 +20,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { LockKeyhole, User, Loader2, LogIn, AlertCircle } from "lucide-react";
 import { Footer } from "@/components/layout/Footer";
 import { TitleWithLogo } from "@/components/layout/TitleWithLogo";
+import { apiUrl } from "@/lib/api";
 
 interface LoginResponse {
 	token: string;
@@ -56,7 +57,7 @@ export default function LoginPage() {
 			const password = formData.get("password") as string;
 
 			const response = await fetch(
-				`${process.env.NEXT_PUBLIC_API_URL}/api/auth/login`,
+				apiUrl("/api/auth/login"),
 				{
 					method: "POST",
 					headers: {

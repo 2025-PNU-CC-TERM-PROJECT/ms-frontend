@@ -5,6 +5,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { PredictionBarChart } from "@/components/ui/PredictionBarChart";
 import { useRouter } from "next/navigation";
+import { apiUrl } from "@/lib/api";
 
 interface UsageHistory {
 	id: number;
@@ -48,7 +49,7 @@ export default function ActivityPage() {
 			return;
 		}
 
-		fetch(`${process.env.NEXT_PUBLIC_API_URL}/user/usage-history`, {
+		fetch(apiUrl("/api/user/usage-history"), {
 			headers: { Authorization: `Bearer ${token}` },
 		})
 			.then((res) => res.json())
@@ -61,7 +62,7 @@ export default function ActivityPage() {
 			const token = localStorage.getItem("token");
 
 			fetch(
-				`${process.env.NEXT_PUBLIC_API_URL}/user/usage-history/image/${selected.id}`,
+				apiUrl(`/api/user/usage-history/image/${selected.id}`),
 				{
 					headers: { Authorization: `Bearer ${token}` },
 				}
@@ -73,7 +74,7 @@ export default function ActivityPage() {
 				});
 
 			fetch(
-				`${process.env.NEXT_PUBLIC_API_URL}/user/usage-history/image-meta/${selected.id}`,
+				apiUrl(`/api/user/usage-history/image-meta/${selected.id}`),
 				{
 					headers: { Authorization: `Bearer ${token}` },
 				}
