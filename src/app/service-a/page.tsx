@@ -8,6 +8,7 @@ import { Footer } from "@/components/layout/Footer";
 import { TitleWithLogo } from "@/components/layout/TitleWithLogo";
 import { useEffect, useState } from "react";
 import { PredictionBarChart } from "@/components/ui/PredictionBarChart";
+import { apiUrl } from "@/lib/api";
 export default function ServiceA() {
 	const [file, setFile] = useState<File | null>(null);
 	const [result, setResult] = useState<any>(null);
@@ -42,7 +43,7 @@ export default function ServiceA() {
 
 		try {
 			const response = await fetch(
-				`${process.env.NEXT_PUBLIC_API_URL}/dashboard/image-class`,
+				apiUrl("/dashboard/image-class"),
 				{
 					method: "POST",
 					headers: {

@@ -7,6 +7,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Footer } from "@/components/layout/Footer";
 import { TitleWithLogo } from "@/components/layout/TitleWithLogo";
 import { useEffect, useState } from "react";
+import { apiUrl } from "@/lib/api";
 
 export default function ServiceB() {
 	const [text, setText] = useState("");
@@ -35,7 +36,7 @@ export default function ServiceB() {
 
 		try {
 			const response = await fetch(
-				`${process.env.NEXT_PUBLIC_API_URL}/dashboard/text-summary`,
+				apiUrl("/dashboard/text-summary"),
 				{
 					method: "POST",
 					headers: {
